@@ -25,11 +25,9 @@ class AuthController extends Controller
             ] + $request->all()
         );
 
-        return response()->json([
-            'data' => [
-                'id' => $user->id,
-                'status' => 'created'
-            ]
-        ])->setStatusCode(201, 'Created');
+        return $this->createResponse([
+            'id' => $user->id,
+            'status' => 'created'
+        ], 201, 'Created');
     }
 }
