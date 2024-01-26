@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\User\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -19,8 +21,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'surname',
+        'patronymic',
+        'login',
         'password',
+        'photo_file',
+        'email',
+        'role_id',
     ];
 
     /**
@@ -29,6 +36,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'role',
+        'role_id',
+        'password',
         'password',
         'remember_token',
     ];
@@ -42,4 +52,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // belongTo role
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    // middleware function
+    public function hasRole($roles): bool
+    {
+        return in_array($this->role->code, $roles);
+    }
 }
