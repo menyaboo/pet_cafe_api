@@ -34,7 +34,15 @@ class UserController extends Controller
 
     public function index()
     {
-        return $this->createResponse(User::all(), 200, 'OK');
+        $users = User::with('role')->get();
+
+        $users = $users->map(function ($user) {
+            return [...$user->toArray(),
+                "role" => $user->role,
+            ];
+        })->toArray();
+
+        return $this->createResponse($users, 200, 'OK');
     }
 
     public function show(User $user)
