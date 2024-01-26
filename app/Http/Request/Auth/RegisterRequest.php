@@ -3,7 +3,6 @@
 namespace App\Http\Request\Auth;
 
 use App\Http\Request\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class RegisterRequest extends ApiRequest
