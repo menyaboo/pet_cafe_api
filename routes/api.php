@@ -22,3 +22,18 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('/login', 'login');
     Route::post('/register', 'register');
 });
+
+// role, user is admin
+Route::controller(RoleController::class)
+    ->prefix('roles')
+    ->middleware(['auth:sanctum', 'role:admin'])
+    ->group(function () {
+        Route::get('/','index');
+        Route::post('/', 'store');
+        Route::get('/{role}', 'show');
+        Route::put('/{role}', 'update');
+        Route::delete('/{role}', 'destroy');
+    }
+);
+
+
