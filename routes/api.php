@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +17,49 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// auth
+Route::controller(AuthController::class)
+    ->prefix('auth')
+    ->group(function () {
+        Route::post('/login', 'login');
+        Route::post('/register', 'register');
+    }
+);
+
+// role, user is admin
+Route::controller(RoleController::class)
+    ->prefix('roles')
+    ->middleware(['auth:sanctum', 'role:admin'])
+    ->group(function () {
+        Route::get('/','index');
+        Route::post('/', 'store');
+        Route::get('/{role}', 'show');
+        Route::put('/{role}', 'update');
+        Route::delete('/{role}', 'destroy');
+    }
+);
+
+//user
+Route::controller(UserController::class)
+    ->prefix('users')
+    ->group(function () {
+        // auth user routes
+        Route::middleware('auth:sanctum')
+            ->prefix('auth')
+            ->group(function () {
+                Route::get('/','getAuthenticatedUser');
+                Route::put('/','updateSelf');
+            }
+        );
+
+        // auth admin routes
+        Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+            Route::get('/','index');
+            Route::get('/{user}', 'show');
+            Route::put('/{user}', 'update');
+            Route::delete('/{user}', 'destroy');
+        });
+    }
+);
+
+
